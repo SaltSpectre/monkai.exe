@@ -4,15 +4,7 @@
 
 evolve. adapt. survive.
 
-<img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/42a5a1ce-8720-4f7e-9cb2-27227d3a135c" />
-
-```
-                      __   _
-  _ __ ___   ___  _ __  | | _(_)
- | '_ ` _ \ / _ \| '_ \| |/ / |
- | | | | | | (_) | | | |   <| |
- |_| |_| |_|\___/|_| |_|_|\_\_|
-```
+<img width="500" height="300" alt="image" src="https://github.com/user-attachments/assets/42a5a1ce-8720-4f7e-9cb2-27227d3a135c" />
 
 autonomous ai agent that starts with **zero tools** and evolves by inventing its own.
 
