@@ -25,7 +25,7 @@ each cycle:
 4. **memento_note**, writes a note for the next cycle, including a list of tools it has created so far
 5. **sleep**, waits, then starts over
 
-<img width="900" height="400" alt="image" src="https://github.com/user-attachments/assets/e759329c-7c9b-4f66-acda-79fa1a07064b" />
+<img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/e759329c-7c9b-4f66-acda-79fa1a07064b" />
 
 ## build
 
