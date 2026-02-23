@@ -4,6 +4,8 @@
 
 evolve. adapt. survive.
 
+<img width="500" height="250" alt="image" src="https://github.com/user-attachments/assets/42a5a1ce-8720-4f7e-9cb2-27227d3a135c" />
+
 ```
                       __   _
   _ __ ___   ___  _ __  | | _(_)
