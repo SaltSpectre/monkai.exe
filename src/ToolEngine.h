@@ -12,7 +12,8 @@ struct ToolResult {
 
 class ToolEngine final {
 public:
-    ToolEngine(const std::filesystem::path& toolsDir = R"(C:\temp\monkai_tools)");
+    ToolEngine(const std::filesystem::path& toolsDir = R"(C:\temp\monkai_tools)",
+               size_t maxOutput = 4000);
 
     bool WriteScript(const std::string& filename, const std::string& code);
     ToolResult ExecuteScript(const std::string& filename, int timeoutMs = 30000);
@@ -20,6 +21,7 @@ public:
 
 private:
     std::filesystem::path _toolsDir;
+    size_t _maxOutput;
 
     std::string GetInterpreter(const std::string& filename);
     ToolResult RunProcess(const std::string& command, int timeoutMs);
