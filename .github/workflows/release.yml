@@ -28,9 +28,10 @@ jobs:
             - name: Read version
               id: version
               run: |
-                  $version = (Select-String -Path src/version.cpp -Pattern '"([^"]+)"').Matches.Groups[1].Value
-                  echo "value=$version" >> $env:GITHUB_OUTPUT
-
+                  $match = Select-String -Path src/version.cpp -Pattern 'VERSION\s*=\s*"([^"]+)"'
+                  $version = $match.Matches.Groups[1].Value
+                  if (-not $version) { Write-Error "Failed to extract VERSION from src/version.cpp"; exit 1 }
+                  "value=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
             - name: Configure CMake
               run: cmake -B build -G "Visual Studio 17 2022" -A x64
 
