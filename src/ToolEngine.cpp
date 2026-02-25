@@ -22,6 +22,11 @@ bool ToolEngine::WriteScript(const string& filename, const string& code) {
     ofstream file(filepath);
     if (!file.is_open()) return false;
 
+    // For Python scripts, add encoding reconfiguration to handle UTF-8 output properly. This fixes issues with non-ASCII characters (such as emojis) in the output.
+    if (fs::path(filename).extension().string() == ".py") {
+        file << "import sys\nsys.stdout.reconfigure(encoding='utf-8', errors='replace')\nsys.stderr.reconfigure(encoding='utf-8', errors='replace')\n";
+    }
+
     file << code;
     file.close();
     return file.good();
@@ -59,6 +64,28 @@ vector<string> ToolEngine::ListTools() {
         }
     }
     return tools;
+}
+
+// Replaces any invalid UTF-8 byte sequences with '?' so captured output is safe to embed in JSON.
+static string sanitizeUtf8(const string& s) {
+    string result;
+    result.reserve(s.size());
+    size_t i = 0;
+    while (i < s.size()) {
+        unsigned char c = s[i];
+        if (c < 0x80) {
+            result += s[i++];
+        } else if ((c & 0xE0) == 0xC0 && i+1 < s.size() && (s[i+1] & 0xC0) == 0x80) {
+            result += s[i++]; result += s[i++];
+        } else if ((c & 0xF0) == 0xE0 && i+2 < s.size() && (s[i+1] & 0xC0) == 0x80 && (s[i+2] & 0xC0) == 0x80) {
+            result += s[i++]; result += s[i++]; result += s[i++];
+        } else if ((c & 0xF8) == 0xF0 && i+3 < s.size() && (s[i+1] & 0xC0) == 0x80 && (s[i+2] & 0xC0) == 0x80 && (s[i+3] & 0xC0) == 0x80) {
+            result += s[i++]; result += s[i++]; result += s[i++]; result += s[i++];
+        } else {
+            result += '?'; i++;
+        }
+    }
+    return result;
 }
 
 #ifdef _WIN32
@@ -127,6 +154,8 @@ ToolResult ToolEngine::RunProcess(const string& command, int timeoutMs) {
     } else {
         GetExitCodeProcess(pi.hProcess, &exitCode);
     }
+
+    output = sanitizeUtf8(output);
 
     const size_t maxOutput = 4000;
     if (output.size() > maxOutput) {
