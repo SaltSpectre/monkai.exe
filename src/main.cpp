@@ -83,6 +83,8 @@ int main(int argc, char* argv[]) {
     printBanner();
 
     string apiKey;
+    string model;
+    string endpointUrl;
     int cycleSeconds = 15;
     bool dryRun = false;
 
@@ -90,6 +92,10 @@ int main(int argc, char* argv[]) {
         string arg = argv[i];
         if (arg == "--api-key" && i + 1 < argc) {
             apiKey = argv[++i];
+        } else if (arg == "--model" && i + 1 < argc) {
+            model = argv[++i];
+        } else if (arg == "--endpoint-url" && i + 1 < argc) {
+            endpointUrl = argv[++i];
         } else if (arg == "--interval" && i + 1 < argc) {
             cycleSeconds = stoi(argv[++i]);
         } else if (arg == "--dry-run") {
@@ -100,6 +106,24 @@ int main(int argc, char* argv[]) {
     if (apiKey.empty()) {
         const char* envKey = getenv("OPENAI_API_KEY");
         if (envKey) apiKey = envKey;
+    }
+
+    if (model.empty()) {
+        const char* envModel = getenv("OPENAI_MODEL");
+        if (envModel) model = envModel;
+    }
+
+    if (model.empty()) {
+        model = "gpt-4o";
+    }
+
+    if (endpointUrl.empty()) {
+        const char* envUrl = getenv("OPENAI_ENDPOINT_URL");
+        if (envUrl) endpointUrl = envUrl;
+    }
+
+    if (endpointUrl.empty()) {
+        endpointUrl = "https://api.openai.com/v1/chat/completions";
     }
 
     if (apiKey.empty() && !dryRun) {
@@ -126,7 +150,7 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    OpenAIClient client(apiKey);
+    OpenAIClient client(apiKey, model, endpointUrl);
     int cycle = 0;
 
     log("SYSTEM", "monkey is waking up...");

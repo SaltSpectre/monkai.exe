@@ -8,8 +8,8 @@
 using namespace std;
 using json = nlohmann::json;
 
-OpenAIClient::OpenAIClient(const string& apiKey, const string& model)
-    : _apiKey(apiKey), _model(model) {
+OpenAIClient::OpenAIClient(const string& apiKey, const string& model, const string& endpointUrl)
+    : _apiKey(apiKey), _model(model), _endpointUrl(endpointUrl) {
     curl_global_init(CURL_GLOBAL_DEFAULT);
 }
 
@@ -88,7 +88,7 @@ AgentResponse OpenAIClient::Chat(const json& messages) {
     string authHeader = "Authorization: Bearer " + _apiKey;
     headers = curl_slist_append(headers, authHeader.c_str());
 
-    curl_easy_setopt(curl, CURLOPT_URL, "https://api.openai.com/v1/chat/completions");
+    curl_easy_setopt(curl, CURLOPT_URL, _endpointUrl.c_str());
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, requestBody.c_str());
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
