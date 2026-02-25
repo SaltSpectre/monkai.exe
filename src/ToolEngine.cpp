@@ -13,7 +13,7 @@
 using namespace std;
 namespace fs = filesystem;
 
-ToolEngine::ToolEngine(const fs::path& toolsDir) : _toolsDir(toolsDir) {
+ToolEngine::ToolEngine(const fs::path& toolsDir, size_t maxOutput) : _toolsDir(toolsDir), _maxOutput(maxOutput) {
     fs::create_directories(_toolsDir);
 }
 
@@ -157,9 +157,8 @@ ToolResult ToolEngine::RunProcess(const string& command, int timeoutMs) {
 
     output = sanitizeUtf8(output);
 
-    const size_t maxOutput = 4000;
-    if (output.size() > maxOutput) {
-        output = output.substr(0, maxOutput) + "\n...[output truncated, too long]";
+    if (output.size() > _maxOutput) {
+        output = output.substr(0, _maxOutput) + "\n...[output truncated: " + to_string(_maxOutput) + "/" + to_string(output.size()) + " chars shown]";
     }
 
     CloseHandle(pi.hProcess);

@@ -86,6 +86,7 @@ int main(int argc, char* argv[]) {
     string model;
     string endpointUrl;
     int cycleSeconds = 15;
+    int maxOutput = -1;
     bool dryRun = false;
 
     for (int i = 1; i < argc; i++) {
@@ -96,6 +97,8 @@ int main(int argc, char* argv[]) {
             model = argv[++i];
         } else if (arg == "--endpoint-url" && i + 1 < argc) {
             endpointUrl = argv[++i];
+        } else if (arg == "--max-output" && i + 1 < argc) {
+            maxOutput = stoi(argv[++i]);
         } else if (arg == "--interval" && i + 1 < argc) {
             cycleSeconds = stoi(argv[++i]);
         } else if (arg == "--dry-run") {
@@ -126,6 +129,11 @@ int main(int argc, char* argv[]) {
         endpointUrl = "https://api.openai.com/v1/chat/completions";
     }
 
+    if (maxOutput < 0) {
+        const char* envMax = getenv("MONKAI_MAX_OUTPUT");
+        maxOutput = envMax ? stoi(envMax) : 4000;
+    }
+
     if (apiKey.empty() && !dryRun) {
         cerr << "error: OPENAI_API_KEY not found.\n";
         cerr << "usage: monkai.exe --api-key <key>\n";
@@ -134,7 +142,7 @@ int main(int argc, char* argv[]) {
     }
 
     Memento memento;
-    ToolEngine tools;
+    ToolEngine tools(R"(C:\temp\monkai_tools)", static_cast<size_t>(maxOutput));
 
     if (dryRun) {
         log("SYSTEM", "dry-run mode active, no API calls will be made");
